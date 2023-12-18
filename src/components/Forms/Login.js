@@ -24,6 +24,10 @@ const Login = () => {
     e.preventDefault();
     dispatch(userLoginAction(formData));
   };
+
+  if (userAuth?.status) {
+    window.location.href = "/dashboard";
+  }
   return (
     <>
       <section className="relative py-16 bg-gray-50">

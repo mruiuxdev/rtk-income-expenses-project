@@ -48,7 +48,7 @@ export const userRegisterAction = createAsyncThunk(
 );
 
 export const userLoginAction = createAsyncThunk(
-  "post/login",
+  "user/login",
   async ({ email, password }, { rejectWithValue, dispatch, getState }) => {
     try {
       const config = {
@@ -64,6 +64,33 @@ export const userLoginAction = createAsyncThunk(
       );
 
       localStorage.setItem("userInfo", JSON.stringify(data));
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const userLogoutAction = createAsyncThunk("user/logout", async () => {
+  localStorage.removeItem("userInfo");
+
+  return null;
+});
+
+export const getProfileAction = createAsyncThunk(
+  "user/profile",
+  async (payload, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const token = getState()?.users?.userAuth?.userInfo?.token;
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.get(`${apiUrl}/users/profile`, config);
 
       return data;
     } catch (error) {
@@ -102,6 +129,25 @@ const usersSlices = createSlice({
       .addCase(userLoginAction.rejected, (state, action) => {
         state.loading = false;
         state.userAuth.error = action.payload;
+      });
+
+    builder.addCase(userLogoutAction.fulfilled, (state) => {
+      state.loading = false;
+      state.userAuth.userInfo = null;
+    });
+
+    builder
+      .addCase(getProfileAction.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getProfileAction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload;
+      })
+      .addCase(getProfileAction.rejected, (state, action) => {
+        state.loading = false;
+        state.profile = {};
+        state.error = action.payload;
       });
   },
 });

@@ -1,6 +1,6 @@
 import React from "react";
 
-const AccountSummary = () => {
+const AccountSummary = ({ profile }) => {
   return (
     <section className="py-20">
       <h1 style={{ textAlign: "center" }}>Account Summary</h1>

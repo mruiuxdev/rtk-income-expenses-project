@@ -25,6 +25,10 @@ const Login = () => {
     e.preventDefault();
     dispatch(userRegisterAction(formData));
   };
+
+  if (userAuth?.status) {
+    window.location.href = "/login";
+  }
   return (
     <>
       <section className="relative py-16 bg-gray-50">
