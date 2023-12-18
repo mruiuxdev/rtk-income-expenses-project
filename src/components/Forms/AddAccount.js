@@ -1,25 +1,28 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { createAccountAction } from "../../redux/slice/accounts/accounts.slice";
 
 const AddAccount = () => {
-  const [transaction, setTransaction] = useState({
-    title: "",
+  const [account, setAccount] = useState({
+    name: "",
     initialBalance: "",
-    transactionType: "",
     notes: "",
     accountType: "",
   });
-  //---Destructuring---
-  const { title, initialBalance, notes, accountType } = transaction;
-  //---onchange handler----
+
+  const dispatch = useDispatch();
+
+  const { loading, error } = useSelector((state) => state?.accounts);
+
+  const { name, initialBalance, notes, accountType } = account;
+
   const onChange = (e) => {
-    setTransaction({ ...transaction, [e.target.name]: e.target.value });
+    setAccount({ ...account, [e.target.name]: e.target.value });
   };
 
-  //---onsubmit handler----
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(transaction);
+    dispatch(createAccountAction(account));
   };
   return (
     <section className="py-16 xl:pb-56 bg-white overflow-hidden">
@@ -31,12 +34,17 @@ const AddAccount = () => {
           <p className="mb-12 font-medium text-lg text-gray-600 leading-normal">
             Create an account(Project) to start tracking your transactions
           </p>
+          {error?.message && (
+            <div className="mb-4 bg-red-100 text-red-800 rounded p-2">
+              {error.message}
+            </div>
+          )}
           <form onSubmit={onSubmit}>
             <label className="block mb-5">
               <input
-                value={title}
+                value={name}
                 onChange={onChange}
-                name="title"
+                name="name"
                 className="px-4 py-3.5 w-full text-gray-500 font-medium placeholder-gray-500 bg-white outline-none border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300"
                 id="signUpInput2-1"
                 type="text"
@@ -97,9 +105,10 @@ const AddAccount = () => {
             </div>
             <button
               type="submit"
+              disabled={loading ? true : false}
               className="mb-8 py-4 px-9 w-full text-white font-semibold border border-indigo-700 rounded-xl shadow-4xl focus:ring focus:ring-indigo-300 bg-indigo-600 hover:bg-indigo-700 transition ease-in-out duration-200"
             >
-              Create Account
+              {loading ? "Creating..." : "Create Account"}
             </button>
             {/* <p className="font-medium">
               <span>Already have an account?</span>

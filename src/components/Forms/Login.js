@@ -81,7 +81,7 @@ const Login = () => {
                   className="block w-full py-4 px-6 text-center font-heading font-medium text-base text-white bg-green-500 hover:bg-green-600 border border-green-500 hover:border-green-600 rounded-sm transition duration-200"
                   type="submit"
                 >
-                  {loading ? "Waiting..." : "Sign in"}
+                  {loading ? "Logging..." : "Sign in"}
                 </button>
               </div>
               <Link
