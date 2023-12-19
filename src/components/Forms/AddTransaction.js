@@ -112,7 +112,7 @@ const AddTransaction = () => {
 
             <p className="font-medium">
               <Link
-                to={"/account/3"}
+                to={`/account/${id}`}
                 className="text-indigo-600 hover:text-indigo-700"
                 href="#"
               >
