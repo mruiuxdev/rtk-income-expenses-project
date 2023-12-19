@@ -44,6 +44,27 @@ export const createAccountAction = createAsyncThunk(
   }
 );
 
+export const getAccountDetailsAction = createAsyncThunk(
+  "/accounts/id",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const token = getState()?.users?.userAuth?.userInfo?.token;
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.get(`${apiUrl}/accounts/${id}`, config);
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const accountsSlice = createSlice({
   name: "accounts",
   initialState,
@@ -54,10 +75,26 @@ const accountsSlice = createSlice({
       })
       .addCase(createAccountAction.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = false;
+        state.success = true;
         state.account = action.payload;
       })
       .addCase(createAccountAction.rejected, (state, action) => {
+        state.loading = false;
+        state.success = false;
+        state.account = null;
+        state.error = action.payload;
+      });
+
+    builder
+      .addCase(getAccountDetailsAction.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAccountDetailsAction.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.account = action.payload;
+      })
+      .addCase(getAccountDetailsAction.rejected, (state, action) => {
         state.loading = false;
         state.success = false;
         state.account = null;

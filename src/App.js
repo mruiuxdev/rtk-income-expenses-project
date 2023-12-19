@@ -34,9 +34,30 @@ function App() {
             </AuthRoute>
           }
         />
-        <Route path="/account/:id" element={<AccountDetails />} />
-        <Route path="/add-transaction/:id" element={<AddTransaction />} />
-        <Route path="/edit-transaction/:id" element={<EditTransaction />} />
+        <Route
+          path="/account/:id"
+          element={
+            <AuthRoute>
+              <AccountDetails />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/add-transaction/:id"
+          element={
+            <AuthRoute>
+              <AddTransaction />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/edit-transaction/:id"
+          element={
+            <AuthRoute>
+              <EditTransaction />
+            </AuthRoute>
+          }
+        />
         <Route
           path="/add-account"
           element={
@@ -45,7 +66,14 @@ function App() {
             </AuthRoute>
           }
         />
-        <Route path="/edit-account/:id" element={<EditAccount />} />
+        <Route
+          path="/edit-account/:id"
+          element={
+            <AuthRoute>
+              <EditAccount />
+            </AuthRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>

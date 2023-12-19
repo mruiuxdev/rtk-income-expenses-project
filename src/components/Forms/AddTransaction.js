@@ -1,26 +1,31 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import { createTransactionAction } from "../../redux/slice/transactions/transactions.slice";
 
 const AddTransaction = () => {
   const [transaction, setTransaction] = useState({
-    title: "",
+    name: "",
     amount: "",
     transactionType: "",
-    date: "",
     category: "",
     notes: "",
   });
-  //---Destructuring---
-  const { title, amount, transactionType, date, category, notes } = transaction;
-  //---onchange handler----
+
+  const { id } = useParams();
+
+  const dispatch = useDispatch();
+
+  const { loading, error } = useSelector((state) => state?.transactions);
+
+  const { name, amount, transactionType, category, notes } = transaction;
   const onChange = (e) => {
     setTransaction({ ...transaction, [e.target.name]: e.target.value });
   };
 
-  //---onsubmit handler----
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(transaction);
+    dispatch(createTransactionAction({ ...transaction, id }));
   };
   return (
     <section className="py-16 xl:pb-56 bg-white overflow-hidden">
@@ -32,12 +37,17 @@ const AddTransaction = () => {
           <p className="mb-12 font-medium text-lg text-gray-600 leading-normal">
             You are adding new transaction to .....
           </p>
+          {error?.message && (
+            <div className="mb-4 bg-red-100 text-red-800 rounded p-2">
+              {error.message}
+            </div>
+          )}
           <form onSubmit={onSubmit}>
             <label className="block mb-5">
               <input
-                value={title}
+                value={name}
                 onChange={onChange}
-                name="title"
+                name="name"
                 className="px-4 py-3.5 w-full text-gray-500 font-medium placeholder-gray-500 bg-white outline-none border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300"
                 id="signUpInput2-1"
                 type="text"
@@ -57,10 +67,10 @@ const AddTransaction = () => {
             </label>
             <label className="block mb-5">
               <select
-                value={category}
+                value={transactionType}
                 onChange={onChange}
-                name="category"
-                class="appearance-none block w-full py-3 px-4 leading-tight text-gray-700 bg-gray-200 focus:bg-white border border-gray-200 focus:border-gray-500 rounded focus:outline-none"
+                name="transactionType"
+                className="appearance-none block w-full py-3 px-4 leading-tight text-gray-700 bg-gray-200 focus:bg-white border border-gray-200 focus:border-gray-500 rounded focus:outline-none"
               >
                 <option>-- Select Transaction Type --</option>
                 <option value="Income">Income</option>
@@ -69,27 +79,15 @@ const AddTransaction = () => {
             </label>
             <label className="block mb-5">
               <select
-                value={transactionType}
+                value={category}
                 onChange={onChange}
-                name="transactionType"
-                class="appearance-none block w-full py-3 px-4 leading-tight text-gray-700 bg-gray-200 focus:bg-white border border-gray-200 focus:border-gray-500 rounded focus:outline-none"
+                name="category"
+                className="appearance-none block w-full py-3 px-4 leading-tight text-gray-700 bg-gray-200 focus:bg-white border border-gray-200 focus:border-gray-500 rounded focus:outline-none"
               >
                 <option>-- Select Category --</option>
                 <option value="Personal">Personal</option>
-                <option>Groceries</option>
-                <option>Transportation</option>
+                <option value="Groceries">Groceries</option>
               </select>
-            </label>
-
-            <label className="block mb-5">
-              <input
-                value={date}
-                onChange={onChange}
-                name="date"
-                className="px-4 py-3.5 w-full text-gray-500 font-medium placeholder-gray-500 bg-white outline-none border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300"
-                id="signUpInput2-2"
-                type="date"
-              />
             </label>
             <div>
               <div className="mt-3 mb-3">
@@ -106,9 +104,10 @@ const AddTransaction = () => {
             </div>
             <button
               type="submit"
+              disabled={loading ? true : false}
               className="mb-8 py-4 px-9 w-full text-white font-semibold border border-indigo-700 rounded-xl shadow-4xl focus:ring focus:ring-indigo-300 bg-indigo-600 hover:bg-indigo-700 transition ease-in-out duration-200"
             >
-              Create Transaction
+              {loading ? "Creating..." : "Create Transaction"}
             </button>
 
             <p className="font-medium">
