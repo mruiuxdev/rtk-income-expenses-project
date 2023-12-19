@@ -18,12 +18,12 @@ const AccountDetails = () => {
   const transactions = account?.data?.transactions;
 
   const sumTransactionsIncome = transactions
-    .filter((transaction) => transaction.transactionType === "Income")
-    .reduce((acc, curr) => acc + curr.amount, 0);
+    ?.filter((transaction) => transaction.transactionType === "Income")
+    ?.reduce((acc, curr) => acc + curr.amount, 0);
 
   const sumTransactionsExpense = transactions
-    .filter((transaction) => transaction.transactionType === "Expenses")
-    .reduce((acc, curr) => acc + curr.amount, 0);
+    ?.filter((transaction) => transaction.transactionType === "Expenses")
+    ?.reduce((acc, curr) => acc + curr.amount, 0);
 
   return (
     <>
