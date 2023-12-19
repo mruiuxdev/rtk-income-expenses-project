@@ -1,26 +1,49 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getAccountDetailsAction,
+  updateAccountAction,
+} from "../../redux/slice/accounts/accounts.slice";
+import { useParams, useNavigate } from "react-router-dom";
 
 const EditAccount = () => {
+  const { id } = useParams();
+
+  const dispatch = useDispatch();
+
+  const { account, error, loading, success } = useSelector(
+    (state) => state?.accounts
+  );
+
+  const navigate = useNavigate();
+
   const [transaction, setTransaction] = useState({
-    title: "",
-    initialBalance: "",
-    transactionType: "",
-    notes: "",
-    accountType: "",
+    name: account?.data?.name,
+    initialBalance: account?.data?.initialBalance,
+    transactionType: account?.data?.transactionType,
+    notes: account?.data?.notes,
+    accountType: account?.data?.accountType,
   });
-  //---Destructuring---
-  const { title, initialBalance, accountType, notes } = transaction;
-  //---onchange handler----
+
+  useEffect(() => {
+    dispatch(getAccountDetailsAction(id));
+  }, [dispatch, id]);
+
+  const { name, initialBalance, accountType, notes } = transaction;
+
   const onChange = (e) => {
     setTransaction({ ...transaction, [e.target.name]: e.target.value });
   };
 
-  //---onsubmit handler----
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(transaction);
+    dispatch(updateAccountAction({ ...transaction, id }));
+    setTimeout(() => {
+      return navigate(`/account/${id}`);
+    }, 3000);
   };
+
   return (
     <section className="py-16 xl:pb-56 bg-white overflow-hidden">
       <div className="container px-4 mx-auto">
@@ -31,12 +54,17 @@ const EditAccount = () => {
           <p className="mb-12 font-medium text-lg text-gray-600 leading-normal">
             You are editing....
           </p>
+          {error?.message && (
+            <div className="mb-4 bg-red-100 text-red-800 rounded p-2">
+              {error.message}
+            </div>
+          )}
           <form onSubmit={onSubmit}>
             <label className="block mb-5">
               <input
-                value={title}
+                value={name}
                 onChange={onChange}
-                name="title"
+                name="name"
                 className="px-4 py-3.5 w-full text-gray-500 font-medium placeholder-gray-500 bg-white outline-none border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300"
                 id="signUpInput2-1"
                 type="text"
@@ -97,14 +125,16 @@ const EditAccount = () => {
             </div>
             <button
               type="submit"
+              disabled={loading ? true : false}
               className="mb-8 py-4 px-9 w-full text-white font-semibold border border-indigo-700 rounded-xl shadow-4xl focus:ring focus:ring-indigo-300 bg-indigo-600 hover:bg-indigo-700 transition ease-in-out duration-200"
             >
-              Create Account
+              {loading ? "Editing..." : "Edit Account"}
             </button>
-            <Link to={"/account/8"} className="font-medium">
-              <a className="text-indigo-600 hover:text-indigo-700" href="#">
-                Back To Account
-              </a>
+            <Link
+              to={`/account/${id}`}
+              className="font-medium text-indigo-600 hover:text-indigo-700"
+            >
+              Back To Account
             </Link>
           </form>
         </div>

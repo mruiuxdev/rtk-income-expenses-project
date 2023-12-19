@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createAccountAction } from "../../redux/slice/accounts/accounts.slice";
+import { useNavigate } from "react-router-dom";
 
 const AddAccount = () => {
   const [account, setAccount] = useState({
@@ -9,6 +10,8 @@ const AddAccount = () => {
     notes: "",
     accountType: "",
   });
+
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -23,6 +26,9 @@ const AddAccount = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(createAccountAction(account));
+    setTimeout(() => {
+      return navigate("/dashboard");
+    }, 3000);
   };
   return (
     <section className="py-16 xl:pb-56 bg-white overflow-hidden">
